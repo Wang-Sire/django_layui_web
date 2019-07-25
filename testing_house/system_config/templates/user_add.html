@@ -1,0 +1,102 @@
+{% extends "base_iframe.html"  %}
+{% load staticfiles %}
+{% block iframe_info  %}
+    <div class="layui-form" lay-filter="layuiadmin-form-admin" id="layuiadmin-form-admin" style="padding: 20px 10% 0 20%;">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>登录名</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <input type="text" name="username" lay-verify="required" placeholder="请输入登录名" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label"><i style="color: red"> * </i>角色</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <select name="role" class="layui-select">
+                    <option value="">请选择</option>
+                    {% for info in role_info %}
+                        <option value="{{ info.name }}">{{ info.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>员工姓名</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <input type="text" name="employee_name" lay-verify="required" placeholder="请输入员工名称" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <select name="sex">
+                    <option value="">请选择</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                    <option value="保密">保密</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>手机</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <input type="text" name="phone" lay-verify="phone" placeholder="请输入号码" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label"><i style="color: red"> * </i>邮箱</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <input type="text" name="email" lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>员工职称</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <input type="text" name="position" placeholder="请输入职位" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label">在职状态</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <input type="radio" name="job_status" value="在职" title="在职" checked="">
+                <input type="radio" name="job_status" value="离职" title="离职">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属部门</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <select name="department">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+            <label class="layui-form-label">所属小组</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <select name="group">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">直属上级</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <input type="text" name="superior" placeholder="请输入上级领导名称" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label">行政人员</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <input type="text" name="administration" placeholder="请输入行政人员名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">个人简介</label>
+            <div class="layui-input-block" style="width: 70%;">
+                <textarea placeholder="请输入内容" class="layui-textarea" name="profile"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+        </div>
+  </div>
+{% endblock %}
+{% block script_info %}
+<script>
+    layui.config({
+        base: '{% static "/layuiadmin/" %}'
+    }).extend({
+        index: '/lib/index'
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form ;
+    })
+</script>
+{% endblock %}

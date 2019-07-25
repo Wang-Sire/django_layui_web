@@ -1,0 +1,99 @@
+{% extends "base_iframe.html"  %}
+{% load staticfiles %}
+{% block iframe_info  %}
+    <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 20% 0 20%;">
+        <div class="layui-form-item">
+            {% for info in menu_info %}
+            <label class="layui-form-label"><i style="color: red"> * </i>菜单类型</label>
+            <div class="layui-input-block">
+                <select name="isMenu" class="layui-select">
+                    {% if info.isMenu == 0 %}
+                        <option value="0" selected>一级菜单</option>
+                        <option value="1">二级菜单</option>
+                        <option value="2">三级菜单</option>
+                        <option value="3">按钮</option>
+                    {% elif info.isMenu == 1 %}
+                        <option value="0">一级菜单</option>
+                        <option value="1" selected>二级菜单</option>
+                        <option value="2">三级菜单</option>
+                        <option value="3">按钮</option>
+                    {% elif info.isMenu == 2 %}
+                        <option value="0">一级菜单</option>
+                        <option value="1">二级菜单</option>
+                        <option value="2" selected>三级菜单</option>
+                        <option value="3">按钮</option>
+                    {% elif info.isMenu == 3 %}
+                        <option value="0">一级菜单</option>
+                        <option value="1">二级菜单</option>
+                        <option value="2">三级菜单</option>
+                        <option value="3" selected>按钮</option>
+                    {% else %}
+                        <option value="">请选择</option>
+                        <option value="0">一级菜单</option>
+                        <option value="1">二级菜单</option>
+                        <option value="2">三级菜单</option>
+                        <option value="3">按钮</option>
+                    {% endif %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>父级菜单</label>
+            <div class="layui-input-block">
+                <select name="parentId" class="layui-select">
+                {% if menu_info_parent == -1 %}
+                    <option value="" selected>无</option>
+                {% else %}
+                    {% for info in menu %}
+                        {% if menu_info_parent == info.authorityId %}
+                            <option value="{{ info.authorityId }}" selected>{{ info.authorityName }}</option>
+                        {% else %}
+                            <option value="{{ info.authorityId }}">{{ info.authorityName }}</option>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>菜单名称</label>
+            <div class="layui-input-block">
+                <input class="layui-input" name="authorityName" lay-verify="required" autocomplete="off" value="{{ info.authorityName }}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">菜单URL</label>
+            <div class="layui-input-block">
+                <input class="layui-input" name="menuUrl" autocomplete="off" value="{{ info.menuUrl }}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">菜单权限</label>
+            <div class="layui-input-block">
+                <input class="layui-input" name="authority" autocomplete="off" value="{{ info.authority }}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+           <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input class="layui-input" name="authorityId" value="{{ info.authorityId }}" disabled>
+            </div>
+        </div>
+    {% endfor %}
+        <div class="layui-form-item layui-hide">
+            <button class="layui-btn" lay-submit lay-filter="LAY-menu-edit-submit" id="LAY-menu-edit-submit">提交</button>
+        </div>
+    </div>
+{% endblock  %}
+{% block script_info  %}
+<script>
+    layui.config({
+        base: '{% static "/layuiadmin/" %}'
+    }).extend({
+        index: '/lib/index'
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form ;
+    })
+</script>
+{% endblock %}

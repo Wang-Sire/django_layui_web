@@ -1,0 +1,75 @@
+{% extends "base_iframe.html"  %}
+{% load staticfiles %}
+{% block iframe_info  %}
+    <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 20% 0 20%;">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>成立日期</label>
+            <div class="layui-input-block">
+                <input type="text" class="layui-input" id="test-laydate-theme-blue" lay-verify="required" name="establish_date" placeholder="请选择日期" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>上级部门</label>
+            <div class="layui-input-block">
+                <select name="parent_id" class="layui-select">
+                    <option value="-1">无</option>
+                    {% for info in data %}
+                        <option value="{{ info.authority_id }}">{{ info.department_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>部门名称</label>
+            <div class="layui-input-block">
+                <input class="layui-input" name="department_name" lay-verify="required" placeholder="请输入部门名称" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>部门领导</label>
+            <div class="layui-input-block">
+                <input class="layui-input" placeholder="请输入领导名称" name="department_leader" lay-verify="required" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+           <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input class="layui-input" name="authority_id" value="{{ new_id }}" disabled>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">部门描述</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入描述" class="layui-textarea" name="department_label"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <button class="layui-btn" lay-submit lay-filter="LAY-department-submit" id="LAY-department-submit">提交</button>
+        </div>
+    </div>
+{% endblock  %}
+{% block script_info  %}
+<script>
+    layui.config({
+        base: '{% static "/layuiadmin/" %}'
+    }).extend({
+        index: '/lib/index'
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form ;
+    })
+</script>
+ <script>
+  layui.config({
+        base: '{% static "/layuiadmin/" %}'
+  }).extend({
+        index: '/lib/index'
+  }).use(['index', 'laydate'], function(){
+      var laydate = layui.laydate;
+      laydate.render({
+          elem: '#test-laydate-theme-blue'
+          ,theme: '#1E9FFF'
+      });
+  });
+ </script>
+{% endblock %}

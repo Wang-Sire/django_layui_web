@@ -1,0 +1,302 @@
+{% extends "base_iframe.html"  %}
+{% load staticfiles %}
+{% block iframe_info  %}
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="layui-tab layui-tab-brief" lay-filter="component-tabs-brief">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">部门信息</li>
+                        <li>部门岗位</li>
+                        <li>部门员工</li>
+                        <li>部门小组</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <table id="auth-table" lay-filter="auth-table"></table>
+                        </div>
+                        <div class="layui-tab-item">
+                            {% for info in data%}
+                                <p>{{ info.department_name }}</p>
+                            {% endfor %}
+                        </div>
+                        <div class="layui-tab-item">内容3</div>
+                        <div class="layui-tab-item">内容4</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock  %}
+{% block script_info  %}
+<script>
+    layui.config({
+        base: '{% static "/layuiadmin/" %}'
+    }).extend({
+        index: '/lib/index'
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form ;
+    })
+</script>
+ <script>
+  layui.config({
+        base: '{% static "/layuiadmin/" %}'
+  }).extend({
+        index: '/lib/index'
+  }).use(['index', 'laydate'], function(){
+      var laydate = layui.laydate;
+      laydate.render({
+          elem: '#test-laydate-theme-blue'
+          ,theme: '#1E9FFF'
+      });
+  });
+ </script>
+<script>
+    layui.config({
+        base: '{% static "/layuiadmin/" %}'
+    }).extend({
+        treetable: '/json/menu/treetable'
+    }).use(['table', 'treetable'], function () {
+        var $ = layui.$;
+        var table = layui.table;
+        var treetable = layui.treetable;
+
+        // 渲染表格
+        layer.load(3);
+        treetable.render({
+            treeColIndex: 1,
+            treeSpid: -1,
+            treeIdName: 'authority_id',
+            treePidName: 'parent_id',
+            elem: '#auth-table',
+            url: '{% url 'department_data' %}',
+            page: false,
+            height: 'full-140',
+            cols: [[
+                {type: 'numbers'},
+                {field: 'department_name', minWidth: 200, title: '部门名称'},
+                {field: 'department_leader', minWidth: 100, title: '部门主管'},
+                {field: 'establish_date', minWidth: 100, title: '成立日期'},
+                {field: 'department_label', minWidth: 100, title: '部门描述'},
+                {templet: '#auth-state', minWidth: 200, align: 'center', title: '操作'}
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+            let active = {
+                add: function(){
+                layer.open({
+                    type: 2
+                    ,title: '新增'
+                    ,content: '{% url 'department_add' %}'
+                    ,area: ['100%', '500px']
+                    ,btn: ['保存', '取消']
+                    ,offset: '0px'
+                    ,anim: 1
+                    ,btnAlign: 'c'
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submit = layero.find('iframe').contents().find("#LAY-department-submit");
+                        iframeWindow.layui.form.on('submit(LAY-department-submit)', function(data){
+                            var field = data.field;
+                            $.ajax({
+                                type:'get',
+                                url:'{% url 'department_list' %}',
+                                data: field,
+                                success:function(e) {
+                                    if (e === '0') {
+                                        layer.close(index);
+                                        layer.msg('保存成功', {
+                                            icon: 1,
+                                            offset: '1px',
+                                            shift: 6,
+                                        }, function(){
+                                            layer.load(3);
+                                            location.reload();
+                                        });
+                                    } else {
+                                        layer.msg('部门名称重复!', {
+                                            icon: 2,
+                                            offset: '1px',
+                                            shift: 6,
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+                }
+            };
+
+            $('.layui-btn.layui-btn-sm.layui-btn-normal.add').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+        table.on('tool(auth-table)', function(obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('确定删除 "' + data.department_name +'" 吗？', {
+                    icon: 3
+                    ,title: '提示'
+                    ,area: ['100%', '160px']
+                    ,offset: '0px'
+                    ,anim: 1
+                    ,btnAlign: 'c'
+                }, function (index) {
+                    $.ajax({
+                        url: "/department_del",
+                        type: "GET",
+                        data: data,
+                        success: function (msg) {
+                            if (msg === '-1') {
+                                layer.confirm('请先删除子部门！', {
+                                    icon: 3
+                                    ,title: '提示'
+                                    ,area: ['100%', '160px']
+                                    ,offset: '0px'
+                                    ,anim: 1
+                                    ,btnAlign: 'c'
+                                });
+                            } else if (msg === '1') {
+                                layer.msg('"' + data.department_name + '"删除成功', {
+                                    icon: 1,
+                                    offset: '1px',
+                                    shift: 6,
+                                    time: 2000
+                                }, function(){
+                                            layer.load(3);
+                                            location.reload();
+                                        });
+                            } else {
+                                layer.msg('"' + data.department_name +'"删除失败', {
+                                    icon: 3,
+                                    offset: '1px',
+                                    shift: 6,
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if (obj.event === 'edit') {
+                var tr = $(obj.tr);
+                var old_department_name = data.department_name;
+
+                layer.open({
+                    type: 2
+                    ,title: '编辑'
+                    ,content: '/department_edit/name=' + data.department_name
+                    ,area: ['100%', '500px']
+                    ,btn: ['保存', '取消']
+                    ,offset: '0px'
+                    ,anim: 1
+                    ,btnAlign: 'c'
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submit = layero.find('iframe').contents().find("#LAY-department-edit-submit");
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(LAY-department-edit-submit)', function (data) {
+                            var field = data.field; //获取提交的字段
+                            $.ajax({
+                                type: 'get',
+                                url:  '/department_edit/name=' + old_department_name,
+                                data: field,
+                                success: function (e) {
+                                    if (e === '0') {
+                                        layer.close(index);
+                                        layer.msg('保存成功', {
+                                            icon: 1,
+                                            offset: '1px',
+                                            shift: 6,
+                                            time: 2000
+                                        }, function(){
+                                            layer.load(3);
+                                            location.reload();
+                                        });
+                                    }else if (e === '-1') {
+                                        layer.msg('部门已存在', {
+                                            icon: 2,
+                                            offset: '1px',
+                                            shift: 6,
+                                        });
+                                    }else {
+                                        layer.msg('编辑失败!', {
+                                            icon: 2,
+                                            offset: '1px',
+                                            shift: 6,
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                })
+            }else if (obj.event === 'set') {
+                layer.open({
+                    type: 2
+                    , title: '配置'
+                    , content: '/department_set/name=' + data.department_name
+                    , area: ['100%', '500px']
+                    , btn: ['保存', '取消']
+                    , offset: '0px'
+                    , anim: 1
+                    , btnAlign: 'c'
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submit = layero.find('iframe').contents().find("#LAY-department-edit-submit");
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(LAY-department-edit-submit)', function (data) {
+                            var field = data.field; //获取提交的字段
+                            $.ajax({
+                                type: 'get',
+                                url: '/department_set/name=' + old_department_name,
+                                data: field,
+                                success: function (e) {
+                                    if (e === '0') {
+                                        layer.close(index);
+                                        layer.msg('保存成功', {
+                                            icon: 1,
+                                            offset: '1px',
+                                            shift: 6,
+                                            time: 2000
+                                        }, function () {
+                                            layer.load(3);
+                                            location.reload();
+                                        });
+                                    } else if (e === '-1') {
+                                        layer.msg('部门已存在', {
+                                            icon: 2,
+                                            offset: '1px',
+                                            shift: 6,
+                                        });
+                                    } else {
+                                        layer.msg('编辑失败!', {
+                                            icon: 2,
+                                            offset: '1px',
+                                            shift: 6,
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                })
+            }
+        });
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#auth-table');
+        });
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#auth-table');
+        });
+    });
+</script>
+{% endblock %}
