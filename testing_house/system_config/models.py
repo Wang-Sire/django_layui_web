@@ -105,3 +105,15 @@ class DepartmentInfo(models.Model):
 #
 #     def __unicode__(self):
 #         return self.authorityName
+
+
+class Group(models.Model):
+    name = models.CharField(max_length=100)
+    describe = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = '小组管理'
+        verbose_name_plural = '小组管理'

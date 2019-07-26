@@ -1,0 +1,42 @@
+{% extends "base_iframe.html"  %}
+{% load staticfiles %}
+{% block iframe_info  %}
+    <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 20% 0 20%;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">岗位设置</label>
+            <div class="layui-input-block">
+                <select name="role">
+                    <option value="">请选择岗位</option>
+                    {% for role in role_info %}
+                        {% if role.name == info.role %}
+                            <option value="{{ role.name }}">{{ role.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">员工列表</label>
+            <div class="layui-input-block">
+                {% for user in username %}
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" style="margin:5px 0 0 0">{{ user }}</button>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <button class="layui-btn" lay-submit lay-filter="LAY-group-add-submit" id="LAY-group-add-submit">提交</button>
+        </div>
+    </div>
+{% endblock  %}
+{% block script_info  %}
+<script>
+    layui.config({
+        base: '{% static "/layuiadmin/" %}'
+    }).extend({
+        index: '/lib/index'
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form ;
+    })
+</script>
+{% endblock %}

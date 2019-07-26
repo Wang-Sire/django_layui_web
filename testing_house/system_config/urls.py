@@ -53,6 +53,16 @@ urlpatterns = [
     url(r'^role_user/name=(.*)', views.role_user),
     url(r'^role_del_more', views.role_del_more),
 
+    path('group_list', views.group_list, name='group_list'),
+    path('group_data', views.group_data, name='group_data'),
+    path('group_add', views.group_add, name='group_add'),
+    path('group_del', views.group_del, name='group_del'),
+    url(r'^group_edit/id=(.*)', views.group_edit),
+    url(r'^group_del_more', views.group_del_more),
+
+    url(r'^station_list/username=(.*)', views.station_list),
+    path('station_set', views.station_set, name='station_set'),
+
     path('password', views.password, name='password'),
     path('user_info', views.user_info, name='user_info'),
     path('user_form', views.user_form, name='user_form'),

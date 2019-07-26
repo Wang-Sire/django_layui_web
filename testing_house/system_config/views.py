@@ -579,6 +579,100 @@ def department_set(request, name):
             return render(request, 'department_set.html', locals())
 
 
+def group_list(request):
+    group = Group.objects.filter().all()
+    if request.method == 'GET':
+        name = request.GET.get('name', '')
+        describe = request.GET.get('describe', '')
+        if name or describe:
+            if Group.objects.filter(name=name):
+                return HttpResponse(1)
+            else:
+                new_add = Group.objects.create(name=name, describe=describe)
+                new_add.save()
+                return HttpResponse(0)
+    return render(request, 'group_list.html', locals())
+
+
+def group_data(request):
+    if request.method == 'GET':
+        page = request.GET.get('page')
+        limit = request.GET.get('limit')
+        data = Group.objects.all().values()
+        data_list = list(data)
+        limits = Paginator(data_list, limit)
+        contacts = limits.page(page)
+        res = []
+        for contact in contacts:
+            res.append(contact)
+        data_json = {"code": 0, 'msg': "ok", 'count': data_list.__len__(), 'data': res}
+
+        return HttpResponse(json.dumps(data_json))
+    else:
+        return render(request, 'group_list.html', locals())
+
+
+def group_edit(request, name):
+    if name:
+        group = Group.objects.values('id', 'name', 'describe').filter(id=name).order_by().all()
+        if request.method == 'GET':
+            group_name = request.GET.get('name', '')
+            describe = request.GET.get('describe', '')
+            if group_name or describe:
+                if Group.objects.filter(id=name).update(name=group_name, describe=describe):
+                    return HttpResponse(0)
+                else:
+                    return HttpResponse(-1)
+            else:
+                return render(request, 'group_edit.html', locals())
+        else:
+            return render(request, 'group_edit.html', locals())
+
+
+def group_del(request):
+    if request.method == 'GET':
+        name = request.GET.get('name', '')
+        if Group.objects.filter(name=name).delete():
+            return HttpResponse(1)
+        else:
+            return HttpResponse(0)
+    return render(request, 'group_list.html', locals())
+
+
+def group_del_more(request):
+    if request.method == 'GET':
+        role_id = request.GET.get('id', '')
+        del_id = str(role_id).split(',')
+        result = []
+        for i in del_id:
+            if Group.objects.filter(id=int(i)).delete():
+                result.append(1)
+            else:
+                result.append(0)
+        if 0 in result:
+            return HttpResponse(0)
+        else:
+            return HttpResponse(1)
+    return render(request, 'group_list.html', locals())
+
+
+def group_add(request):
+    return render(request, 'group_add.html', locals())
+
+
+def station_list(request, name):
+    if name:
+        username = str(name).split(',')
+        # print(set_id)
+
+    return render(request, 'station_set.html', locals())
+
+
+def station_set(request):
+
+    return render(request, 'group_add.html', locals())
+
+
 def user_info(request):
     return render(request, 'user_info.html', locals())
 
