@@ -12,6 +12,7 @@
             <label class="layui-form-label"><i style="color: red"> * </i>角色</label>
             <div class="layui-input-inline" style="width: 30%">
                 <select name="role">
+                    <option value="">请选择</option>
                     {% for role in role_info %}
                         {% if role.name == info.role %}
                             <option value="{{ info.role }}" selected="selected">{{ info.role }}</option>
@@ -27,32 +28,25 @@
             <div class="layui-input-inline" style="width: 30%">
                 <input type="text" name="employee_name" lay-verify="required" placeholder="请输入员工名称" autocomplete="off" class="layui-input" value="{{ info.employee_name }}" >
             </div>
-            <label class="layui-form-label">性别</label>
+            <label class="layui-form-label"><i style="color: red"> * </i>性别</label>
             <div class="layui-input-inline" style="width: 30%">
-                <select name="sex">
-                    <option value="">请选择</option>
-                    {% if info.sex == "男" %}
-                        <option value="男" selected="selected">男</option>
-                        <option value="女">女</option>
-                        <option value="保密">保密</option>
-                    {% elif info.sex == "女"  %}
-                        <option value="男">男</option>
-                        <option value="女" selected="selected">女</option>
-                        <option value="保密">保密</option>
-                    {% elif info.sex == "保密"  %}
-                        <option value="男">男</option>
-                        <option value="女">女</option>
-                        <option value="保密" selected="selected">保密</option>
-                    {% else %}
-                        <option value="男">男</option>
-                        <option value="女">女</option>
-                        <option value="保密">保密</option>
-                    {% endif %}
-                </select>
+                {% if info.sex == "男" %}
+                    <input type="radio" name="sex" value="男" title="男" checked="">
+                    <input type="radio" name="sex" value="女" title="女">
+                    <input type="radio" name="sex" value="保密" title="保密">
+                {% elif info.sex == "女" %}
+                    <input type="radio" name="sex" value="男" title="男">
+                    <input type="radio" name="sex" value="女" title="女" checked="">
+                    <input type="radio" name="sex" value="保密" title="保密">
+                {% else %}
+                    <input type="radio" name="sex" value="男" title="男">
+                    <input type="radio" name="sex" value="女" title="女">
+                    <input type="radio" name="sex" value="保密" title="保密" checked="">
+                {% endif %}
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label"><i style="color: red"> * </i>手机</label>
+            <label class="layui-form-label"><i style="color: red"> * </i>手机号码</label>
             <div class="layui-input-inline" style="width: 30%">
                 <input type="text" name="phone" lay-verify="phone" placeholder="请输入号码" autocomplete="off" class="layui-input" value="{{ info.phone }}" >
             </div>
@@ -66,7 +60,22 @@
             <div class="layui-input-inline" style="width: 30%">
                 <input type="text" name="position" placeholder="请输入职位" autocomplete="off" class="layui-input" value="{{ info.position }}" >
             </div>
-            <label class="layui-form-label"><i style="color: red"> * </i>在职状态</label>
+            <label class="layui-form-label">部门</label>
+            <div class="layui-input-inline" style="width: 30%">
+                <select name="department">
+                    <option value="">请选择</option>
+                    {% for department in department_info %}
+                        {% if department.department_name == info.department %}
+                            <option value="{{ info.department }}" selected="selected">{{ info.department }}</option>
+                        {% else %}
+                            <option value="{{ department.department_name }}">{{ department.department_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">在职状态</label>
             <div class="layui-input-inline" style="width: 30%">
                 {% if info.job_status == "在职" %}
                     <input type="radio" name="job_status" value="在职" title="在职" checked="">
@@ -76,18 +85,17 @@
                     <input type="radio" name="job_status" value="离职" title="离职" checked="">
                 {% endif %}
             </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">所属部门</label>
+            <label class="layui-form-label">岗位</label>
             <div class="layui-input-inline" style="width: 30%">
-                <select name="department">
+                <select name="jobs_name">
                     <option value="">请选择</option>
-                </select>
-            </div>
-            <label class="layui-form-label">所属小组</label>
-            <div class="layui-input-inline" style="width: 30%">
-                <select name="group">
-                    <option value="">请选择</option>
+                    {% for jobs in jobs_info %}
+                        {% if jobs.name == info.jobs_name %}
+                            <option value="{{ info.jobs_name }}" selected="selected">{{ info.jobs_name }}</option>
+                        {% else %}
+                            <option value="{{ jobs.name }}">{{ jobs.name }}</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
             </div>
         </div>
@@ -96,7 +104,7 @@
             <div class="layui-input-inline" style="width: 30%">
                 <input type="text" name="superior" placeholder="请输入上级领导名称" autocomplete="off" class="layui-input" value="{{ info.superior }}" >
             </div>
-            <label class="layui-form-label">行政人员</label>
+            <label class="layui-form-label">助理</label>
             <div class="layui-input-inline" style="width: 30%">
                 <input type="text" name="administration" placeholder="请输入行政人员名称" autocomplete="off" class="layui-input" value="{{ info.administration }}" >
             </div>

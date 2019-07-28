@@ -1,0 +1,140 @@
+{% extends "base_iframe.html"  %}
+{% load staticfiles %}
+{% block iframe_info  %}
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" data-type="jobs_add">
+                        <i class="layui-icon layui-icon-add-1"></i>新增
+                    </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" data-type="jobs_batch_del">
+                        <i class="layui-icon layui-icon-delete"></i>删除
+                    </button>
+                </div>
+                <table id="LAY-jobs-manage" lay-filter="LAY-jobs-manage"></table>
+                <script type="text/html" id="table-jobs-handle">
+                    <a href="javascript:void(0)" lay-event="jobs_edit" style="color: #1E9FFF">
+                        <i class="layui-icon layui-icon-edit"></i>编辑</a>
+                </script>
+            </div>
+        </div>
+    </div>
+{% endblock  %}
+{% block script_info  %}
+    <script>
+        layui.config({
+            base: '{% static "/layuiadmin/" %}'
+        }).extend({
+            index: '/lib/index'
+        }).use(['index', 'useradmin', 'table'], function(){
+            let $ = layui.$
+                ,table = layui.table;
+                var active = {
+                    jobs_batch_del: function(){
+                        var checkStatus = table.checkStatus('LAY-jobs-manage')
+                            ,checkData = checkStatus.data;
+                            delList=[];
+                            checkData.forEach(function(n,i){
+                                delList.push(n.id);
+                            });
+                            if(checkData.length === 0){
+                                return layer.msg('请选择要删除的数据！',{
+                                                    icon: 3,
+                                                    offset: '1px',
+                                                    shift:6,
+                                                });
+                            }
+                            layer.confirm('确定删除选中的岗位吗？', {
+                                icon: 3
+                                ,title: '提示'
+                                ,area: ['100%', '160px']
+                                ,offset: '0px'
+                                ,anim: 1
+                                ,btnAlign: 'c'
+                            }, function() {
+                                $.ajax({
+                                    url: "/jobs_del_more",
+                                    type: "GET",
+                                    data: "id="+delList,
+                                    success: function (msg) {
+                                        if (msg === '1') {
+                                            layer.msg("删除成功",{
+                                                    icon: 1,
+                                                    offset: '1px',
+                                                    shift:6,
+                                                });
+                                        } else {
+                                            layer.msg("删除失败!",{
+                                                    icon: 2,
+                                                    offset: '1px',
+                                                    shift:6,
+                                                });
+                                        }
+                                        layer.load(3);
+                                        table.reload('LAY-jobs-manage');
+                                    }
+                                });
+                            });
+                            },
+                            jobs_add: function(){
+                layer.open({
+                    type: 2
+                    ,title: '新增'
+                    ,content: '{% url 'jobs_add' %}'
+                    ,area: ['100%', '280px']
+                    ,btn: ['保存', '取消']
+                    ,offset: '0px'
+                    ,anim: 1
+                    ,btnAlign: 'c'
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submit = layero.find('iframe').contents().find("#LAY-jobs-add-submit");
+                        iframeWindow.layui.form.on('submit(LAY-jobs-add-submit)', function(data){
+                            var field = data.field;
+                            $.ajax({
+                                type:'get',
+                                url:'{% url 'jobs_list' %}',
+                                data: field,
+                                success:function(e){
+                                    if(e==='0'){
+                                        layer.close(index);
+                                        layer.msg('保存成功',{
+                                            icon: 1,
+                                            offset: '1px',
+                                            shift:6,
+                                            time: 2000
+                                        });
+                                    } else if(e==='1'){
+                                        layer.msg('岗位已存在!',{
+                                            icon: 2,
+                                            offset: '1px',
+                                            shift:6,
+                                        });
+                                    }else {
+                                        layer.msg('保存失败!',{
+                                            icon: 2,
+                                            offset: '1px',
+                                            shift:6,
+                                        });
+                                    }
+                                    layer.load(3);
+                                    table.reload('LAY-jobs-manage');
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+
+            }
+        };
+        $('.layui-btn.layui-btn-sm.layui-btn-normal').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+    </script>
+{% endblock %}
+
+

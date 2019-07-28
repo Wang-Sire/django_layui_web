@@ -28,7 +28,7 @@ urlpatterns = [
     path('user_del', views.user_del, name='user_del'),
     path('user_locking', views.user_locking, name='user_locking'),
     path('user_reset_password', views.user_reset_password, name='user_reset_password'),
-    url(r'^user_edit/id=(.*)', views.user_edit),
+    url(r'^user_edit/name=(.*)', views.user_edit),
     url(r'^user_del_more', views.user_del_more),
 
     path('menu_add', views.menu_add, name='menu_add'),
@@ -49,7 +49,7 @@ urlpatterns = [
     path('role_data', views.role_data, name='role_data'),
     path('role_add', views.role_add, name='role_add'),
     path('role_del', views.role_del, name='role_del'),
-    url(r'^role_edit/id=(.*)', views.role_edit),
+    url(r'^role_edit/name=(.*)', views.role_edit),
     url(r'^role_user/name=(.*)', views.role_user),
     url(r'^role_del_more', views.role_del_more),
 
@@ -57,11 +57,15 @@ urlpatterns = [
     path('group_data', views.group_data, name='group_data'),
     path('group_add', views.group_add, name='group_add'),
     path('group_del', views.group_del, name='group_del'),
-    url(r'^group_edit/id=(.*)', views.group_edit),
+    url(r'^group_edit/name=(.*)', views.group_edit),
     url(r'^group_del_more', views.group_del_more),
 
-    url(r'^station_list/username=(.*)', views.station_list),
-    path('station_set', views.station_set, name='station_set'),
+    path('jobs_list', views.jobs_list, name='jobs_list'),
+    path('jobs_data', views.jobs_data, name='jobs_data'),
+    path('jobs_add', views.jobs_add, name='jobs_add'),
+    path('jobs_del', views.jobs_del, name='jobs_del'),
+    url(r'^jobs_edit/name=(.*)', views.jobs_edit),
+    url(r'^jobs_del_more', views.jobs_del_more),
 
     path('password', views.password, name='password'),
     path('user_info', views.user_info, name='user_info'),

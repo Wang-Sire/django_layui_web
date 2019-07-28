@@ -5,32 +5,24 @@
         <div class="layui-card">
             <div class="layui-card-body">
                 <div style="padding-bottom: 10px;">
-                    <button class="layui-btn layui-btn-sm layui-btn-normal"  data-type="add">
+                    <button class="layui-btn layui-btn-sm layui-btn-normal"  data-type="group_add">
                         <i class="layui-icon layui-icon-add-1"></i>新增
                     </button>
-                    <button class="layui-btn layui-btn-sm layui-btn-normal" data-type="batchdel">
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" data-type="group_batch_del">
                         <i class="layui-icon layui-icon-delete"></i>删除
                     </button>
-{#                    <button class="layui-btn layui-btn-sm layui-btn-normal" data-type="export">#}
-{#                        <i><svg t="1563844721277" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6770" width="16" height="14"><path d="M529.52869 714.530744c9.03042 4.168506 19.729854 2.918761 27.284767-3.33803l405.441653-333.682068a25.398055 25.398055 0 0 0 9.231992-19.600849c0-7.716171-3.354156-14.811501-9.441626-19.608911L556.805395 5.868563c-7.756485-6.248728-18.246285-7.708108-27.276705-3.329967a25.325489 25.325489 0 0 0-14.690558 23.14045v174.561237C50.013407 216.930434 51.90012 567.29459 52.738659 737.050353v20.237816c0 11.675043 7.764548 21.689133 19.10095 24.59983 2.096347 0.628904 4.40233 0.838539 6.498677 0.838539 9.03042 0 17.633507-4.79741 22.455106-12.932851C238.039644 529.544211 350.944078 517.869168 514.838132 517.248327v174.141967c0 9.796393 5.668201 18.770372 14.690558 23.14045zM104.582943 667.185544c2.305982-74.033315 12.174941-162.249227 52.884395-236.911446 64.632003-118.870961 189.921013-177.681569 383.196181-179.560219 14.061653-0.209635 25.398055-11.473471 25.398056-25.446433V79.700307l339.334143 278.20949-339.124509 279.039967V491.584197c0-6.667997-2.733315-13.344058-7.562976-18.141468a25.801199 25.801199 0 0 0-18.254348-7.506537c-179.84242 0.209635-303.873621 10.844566-435.870942 201.249352z m861.880988 329.303928c0 13.972962-11.546037 25.446432-25.817325 25.446432H78.346348a25.72057 25.72057 0 0 1-25.817324-25.656067v-112.194901a25.72057 25.72057 0 0 1 25.817324-25.656067 25.72057 25.72057 0 0 1 25.809262 25.656067v86.756531h810.673672V525.16607a25.72057 25.72057 0 0 1 25.809261-25.656068 25.72057 25.72057 0 0 1 25.817325 25.656068v471.323402z" fill="#ffffff" p-id="6771"></path></svg>#}
-{#                        </i>导出#}
-{#                    </button>#}
                 </div>
-                <table id="LAY-user-back-role" lay-filter="LAY-user-back-role"></table>
-                <script type="text/html" id="table-role-handle" >
-                    <a href="javascript:void(0)" lay-event="edit" style="color: #1E9FFF">
-                        <i class="layui-icon layui-icon-edit"></i>编辑 |</a>
-                    <a href="javascript:void(0)" lay-event="del" style="color: #1E9FFF">
-                        <i class="layui-icon layui-icon-delete"></i>删除</a>
-{#                    <a href="javascript:void(0)" lay-event="del" style="color: #1E9FFF">#}
-{#                        <i class="layui-icon layui-icon-username"></i>配置人员</a>                    #}
+                <table id="LAY-group-manage" lay-filter="LAY-group-manage"></table>
+                <script type="text/html" id="table-role-handle">
+                    <a href="javascript:void(0)" lay-event="group_edit" style="color: #1E9FFF">
+                        <i class="layui-icon layui-icon-edit"></i>编辑</a>
                 </script>
             </div>
         </div>
     </div>
 {% endblock  %}
 {% block script_info  %}
-<script>
+    <script>
     layui.config({
         base: '{% static "/layuiadmin/" %}'
     }).extend({
@@ -39,8 +31,8 @@
         var $ = layui.$
             ,table = layui.table;
         var active = {
-            batchdel: function(){
-                var checkStatus = table.checkStatus('LAY-user-back-role')
+            group_batch_del: function(){
+                var checkStatus = table.checkStatus('LAY-group-manage')
                     ,checkData = checkStatus.data;
                     delList=[];
                     checkData.forEach(function(n,i){
@@ -53,7 +45,7 @@
                                             shift:6,
                                         });
                     }
-                    layer.confirm('确定删除选中的角色吗？', {
+                    layer.confirm('确定删除选中的小组吗？', {
                         icon: 3
                         ,title: '提示'
                         ,area: ['100%', '160px']
@@ -62,7 +54,7 @@
                         ,btnAlign: 'c'
                     }, function() {
                         $.ajax({
-                            url: "/role_del_more",
+                            url: "/group_del_more",
                             type: "GET",
                             data: "id="+delList,
                             success: function (msg) {
@@ -80,16 +72,16 @@
                                         });
                                 }
                                 layer.load(3);
-                                table.reload('LAY-user-back-role');
+                                table.reload('LAY-group-manage');
                             }
                         });
                     });
                     },
-            add: function(){
+            group_add: function(){
                 layer.open({
                     type: 2
                     ,title: '新增'
-                    ,content: '{% url 'role_add' %}'
+                    ,content: '{% url 'group_add' %}'
                     ,area: ['100%', '280px']
                     ,btn: ['保存', '取消']
                     ,offset: '0px'
@@ -97,32 +89,38 @@
                     ,btnAlign: 'c'
                     ,yes: function(index, layero){
                         var iframeWindow = window['layui-layer-iframe'+ index]
-                            ,submit = layero.find('iframe').contents().find("#LAY-user-role-submit");
-                        iframeWindow.layui.form.on('submit(LAY-user-role-submit)', function(data){
+                            ,submit = layero.find('iframe').contents().find("#LAY-group-add-submit");
+                        iframeWindow.layui.form.on('submit(LAY-group-add-submit)', function(data){
                             var field = data.field;
                             $.ajax({
                                 type:'get',
-                                url:'{% url 'role_list' %}',
+                                url:'{% url 'group_list' %}',
                                 data: field,
                                 success:function(e){
                                     if(e==='0'){
-                                        layer.msg('新增成功',{
+                                        layer.close(index);
+                                        layer.msg('保存成功',{
                                             icon: 1,
                                             offset: '1px',
                                             shift:6,
                                         });
-                                    } else{
-                                        layer.msg('角色名称重复!',{
+                                    } else if(e==='1'){
+                                        layer.msg('小组已存在!',{
+                                            icon: 2,
+                                            offset: '1px',
+                                            shift:6,
+                                        });
+                                    }else {
+                                        layer.msg('保存失败!',{
                                             icon: 2,
                                             offset: '1px',
                                             shift:6,
                                         });
                                     }
                                     layer.load(3);
-                                    table.reload('LAY-user-back-role');
+                                    table.reload('LAY-group-manage');
                                 }
                             });
-                            layer.close(index);
                         });
                         submit.trigger('click');
                     }

@@ -1,0 +1,33 @@
+{% extends "base_iframe.html"  %}
+{% load staticfiles %}
+{% block iframe_info  %}
+    <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 20% 0 20%;">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i style="color: red"> * </i>岗位名称</label>
+            <div class="layui-input-block">
+                <input class="layui-input" name="name" lay-verify="required">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">岗位描述</label>
+            <div class="layui-input-block">
+                <textarea type="text" name="describe" autocomplete="off" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <button class="layui-btn" lay-submit lay-filter="LAY-jobs-add-submit" id="LAY-jobs-add-submit">提交</button>
+        </div>
+    </div>
+{% endblock  %}
+{% block script_info  %}
+<script>
+    layui.config({
+        base: '{% static "/layuiadmin/" %}'
+    }).extend({
+        index: '/lib/index'
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form ;
+    })
+</script>
+{% endblock %}

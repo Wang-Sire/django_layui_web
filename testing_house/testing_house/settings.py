@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'testing_house.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'testing_house_db_02',
+        'NAME': 'testing_house_db',
         'USER': 'root',
         'PASSWORD': '123456',
         'HOST': '127.0.0.1',

@@ -42,7 +42,7 @@
             <div class="layui-input-block">
                 <select name="parentId" class="layui-select">
                 {% if menu_info_parent == -1 %}
-                    <option value="" selected>无</option>
+                    <option value="-1" selected>无</option>
                 {% else %}
                     {% for info in menu %}
                         {% if menu_info_parent == info.authorityId %}

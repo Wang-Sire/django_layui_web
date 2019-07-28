@@ -28,6 +28,8 @@ def index(request):
 
 def user_add(request):
     role_info = Role.objects.filter().all()
+    department_info = DepartmentInfo.objects.filter().all()
+    jobs_info = Jobs.objects.filter().all()
     return render(request, 'user_add.html', locals())
 
 
@@ -43,17 +45,17 @@ def user_list(request):
         position = request.GET.get('position', '')
         job_status = request.GET.get('job_status', '')
         department = request.GET.get('department', '')
-        group = request.GET.get('group', '')
+        jobs_name = request.GET.get('jobs_name', '')
         superior = request.GET.get('superior', '')
         administration = request.GET.get('administration', '')
         profile = request.GET.get('profile', '')
 
         if username or phone or email or role:
             if SysUser.objects.filter(username=username):
-                return HttpResponse(-1)
+                return HttpResponse(1)
             else:
                 new_add = SysUser.objects.create(username=username,
-                                                 password='111111',
+                                                 password='eLTE@com123',
                                                  phone=phone,
                                                  email=email,
                                                  role=role,
@@ -62,7 +64,7 @@ def user_list(request):
                                                  employee_name=employee_name,
                                                  job_status=job_status,
                                                  department=department,
-                                                 group=group,
+                                                 jobs_name=jobs_name,
                                                  superior=superior,
                                                  administration=administration,
                                                  profile=profile)
@@ -80,8 +82,9 @@ def user_data(request):
         page = request.GET.get('page')
         limit = request.GET.get('limit')
         if username or role:
-            data = SysUser.objects.values('id', 'username', 'sex', 'job_status', 'role', 'join_time').\
-                filter(Q(username=username) | Q(role=role)).order_by().all()
+            data = SysUser.objects.values('id', 'username', 'sex', 'job_status', 'role', 'join_time',
+                                          'jobs_name', 'department').filter(Q(username=username) | Q(role=role)).\
+                order_by().all()
         else:
             data = SysUser.objects.all().values()
         data_list = list(data)
@@ -104,6 +107,8 @@ def user_data(request):
 def user_edit(request, name):
     if name:
         role_info = Role.objects.filter().all()
+        department_info = DepartmentInfo.objects.filter().all()
+        jobs_info = Jobs.objects.filter().all()
         user = SysUser.objects.values('id',
                                       'username',
                                       'phone',
@@ -114,10 +119,10 @@ def user_edit(request, name):
                                       'employee_name',
                                       'job_status',
                                       'department',
-                                      'group',
+                                      'jobs_name',
                                       'superior',
                                       'administration',
-                                      'profile').filter(id=name).order_by().all()
+                                      'profile').filter(username=name).order_by().all()
         if request.method == 'GET':
             username = request.GET.get('username', '')
             phone = request.GET.get('phone', '')
@@ -128,25 +133,28 @@ def user_edit(request, name):
             position = request.GET.get('position', '')
             job_status = request.GET.get('job_status', '')
             department = request.GET.get('department', '')
-            group = request.GET.get('group', '')
+            jobs_name = request.GET.get('jobs_name', '')
             superior = request.GET.get('superior', '')
             administration = request.GET.get('administration', '')
             profile = request.GET.get('profile', '')
             
             if username or phone or email or role:
-                if SysUser.objects.filter(id=name).update(username=username,
-                                                          phone=phone,
-                                                          email=email,
-                                                          role=role,
-                                                          sex=sex,
-                                                          position=position,
-                                                          employee_name=employee_name,
-                                                          job_status=job_status,
-                                                          department=department,
-                                                          group=group,
-                                                          superior=superior,
-                                                          administration=administration,
-                                                          profile=profile):
+                if name != username:
+                    if SysUser.objects.filter(username=username):
+                        return HttpResponse(1)
+                if SysUser.objects.filter(username=name).update(username=username,
+                                                                phone=phone,
+                                                                email=email,
+                                                                role=role,
+                                                                sex=sex,
+                                                                position=position,
+                                                                employee_name=employee_name,
+                                                                job_status=job_status,
+                                                                department=department,
+                                                                jobs_name=jobs_name,
+                                                                superior=superior,
+                                                                administration=administration,
+                                                                profile=profile):
                     return HttpResponse(0)
                 else:
                     return HttpResponse(-1)
@@ -171,7 +179,7 @@ def user_locking(request):
 def user_reset_password(request):
     if request.method == 'GET':
         username = request.GET.get('username', '')
-        if SysUser.objects.filter(username=username).update(password='111111'):
+        if SysUser.objects.filter(username=username).update(password='eLTE@com123'):
             return HttpResponse(0)
         else:
             return HttpResponse(-1)
@@ -213,7 +221,7 @@ def role_list(request):
         describe = request.GET.get('describe', '')
         if name or describe:
             if Role.objects.filter(name=name):
-                return HttpResponse(-1)
+                return HttpResponse(1)
             else:
                 new_add = Role.objects.create(name=name, describe=describe)
                 new_add.save()
@@ -241,12 +249,15 @@ def role_data(request):
 
 def role_edit(request, name):
     if name:
-        role = Role.objects.values('id', 'name', 'describe').filter(id=name).order_by().all()
+        role = Role.objects.values('id', 'name', 'describe').filter(name=name).order_by().all()
         if request.method == 'GET':
             role_name = request.GET.get('name', '')
             describe = request.GET.get('describe', '')
             if role_name or describe:
-                if Role.objects.filter(id=name).update(name=role_name, describe=describe):
+                if name != role_name:
+                    if Role.objects.filter(name=role_name):
+                        return HttpResponse(1)
+                if Role.objects.filter(name=name).update(name=role_name, describe=describe):
                     return HttpResponse(0)
                 else:
                     return HttpResponse(-1)
@@ -315,7 +326,7 @@ def menu_list(request):
 
         if authority_name:
             if Menu.objects.filter(authorityName=authority_name):
-                return HttpResponse(-1)
+                return HttpResponse(1)
             else:
                 new_add = Menu.objects.create(
                     authorityId=authority_id,
@@ -376,7 +387,7 @@ def menu_edit(request, name):
             if authority_name:
                 if name != authority_name:
                     if Menu.objects.filter(authorityName=authority_name):
-                        return HttpResponse(-1)
+                        return HttpResponse(1)
                 if authority_name:
                     if Menu.objects.filter(authorityName=name).update(authorityId=authority_id,
                                                                       authorityName=authority_name,
@@ -386,7 +397,7 @@ def menu_edit(request, name):
                                                                       parentId=parent_id):
                         return HttpResponse(0)
                     else:
-                        return HttpResponse(1)
+                        return HttpResponse(-1)
             else:
                 return render(request, 'menu_edit.html', locals())
         else:
@@ -446,7 +457,7 @@ def department_list(request):
 
                 return HttpResponse(0)
 
-    return render(request, 'form_list.html', locals())
+    return render(request, 'department_list.html', locals())
 
 
 def department_add(request):
@@ -614,12 +625,15 @@ def group_data(request):
 
 def group_edit(request, name):
     if name:
-        group = Group.objects.values('id', 'name', 'describe').filter(id=name).order_by().all()
+        group = Group.objects.values('id', 'name', 'describe').filter(name=name).order_by().all()
         if request.method == 'GET':
             group_name = request.GET.get('name', '')
             describe = request.GET.get('describe', '')
             if group_name or describe:
-                if Group.objects.filter(id=name).update(name=group_name, describe=describe):
+                if name != group_name:
+                    if Group.objects.filter(name=group_name):
+                        return HttpResponse(1)
+                if Group.objects.filter(name=name).update(name=group_name, describe=describe):
                     return HttpResponse(0)
                 else:
                     return HttpResponse(-1)
@@ -660,17 +674,88 @@ def group_add(request):
     return render(request, 'group_add.html', locals())
 
 
-def station_list(request, name):
+def jobs_list(request):
+    jobs = Jobs.objects.filter().all()
+    if request.method == 'GET':
+        name = request.GET.get('name', '')
+        describe = request.GET.get('describe', '')
+        if name or describe:
+            if Jobs.objects.filter(name=name):
+                return HttpResponse(1)
+            else:
+                new_add = Jobs.objects.create(name=name, describe=describe)
+                new_add.save()
+                return HttpResponse(0)
+    return render(request, 'jobs_list.html', locals())
+
+
+def jobs_data(request):
+    if request.method == 'GET':
+        page = request.GET.get('page')
+        limit = request.GET.get('limit')
+        data = Jobs.objects.all().values()
+        data_list = list(data)
+        limits = Paginator(data_list, limit)
+        contacts = limits.page(page)
+        res = []
+        for contact in contacts:
+            res.append(contact)
+        data_json = {"code": 0, 'msg': "ok", 'count': data_list.__len__(), 'data': res}
+
+        return HttpResponse(json.dumps(data_json))
+    else:
+        return render(request, 'jobs_list.html', locals())
+
+
+def jobs_edit(request, name):
     if name:
-        username = str(name).split(',')
-        # print(set_id)
+        jobs = Jobs.objects.values('id', 'name', 'describe').filter(name=name).order_by().all()
+        if request.method == 'GET':
+            jobs_name = request.GET.get('name', '')
+            describe = request.GET.get('describe', '')
+            if jobs_name:
+                if name != jobs_name:
+                    if Jobs.objects.filter(name=jobs_name):
+                        return HttpResponse(1)
+                if Jobs.objects.filter(name=name).update(name=jobs_name, describe=describe):
+                    return HttpResponse(0)
+                else:
+                    return HttpResponse(-1)
+            else:
+                return render(request, 'jobs_edit.html', locals())
+        else:
+            return render(request, 'jobs_edit.html', locals())
 
-    return render(request, 'station_set.html', locals())
+
+def jobs_del(request):
+    if request.method == 'GET':
+        name = request.GET.get('name', '')
+        if Jobs.objects.filter(name=name).delete():
+            return HttpResponse(1)
+        else:
+            return HttpResponse(0)
+    return render(request, 'jobs_list.html', locals())
 
 
-def station_set(request):
+def jobs_del_more(request):
+    if request.method == 'GET':
+        jobs_id = request.GET.get('id', '')
+        del_id = str(jobs_id).split(',')
+        result = []
+        for i in del_id:
+            if Jobs.objects.filter(id=int(i)).delete():
+                result.append(1)
+            else:
+                result.append(0)
+        if 0 in result:
+            return HttpResponse(0)
+        else:
+            return HttpResponse(1)
+    return render(request, 'jobs_list.html', locals())
 
-    return render(request, 'group_add.html', locals())
+
+def jobs_add(request):
+    return render(request, 'jobs_add.html', locals())
 
 
 def user_info(request):

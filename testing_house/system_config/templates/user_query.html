@@ -1,0 +1,52 @@
+{% extends "base_iframe.html"  %}
+{% load staticfiles %}
+{% block iframe_info  %}
+    <div class="layui-form" lay-filter="layuiadmin-form-admin" id="layuiadmin-form-admin" style="padding: 20px 0 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="username" lay-verify="required" placeholder="请输入登录名" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label">角色</label>
+            <div class="layui-input-inline">
+                <select name="role" class="layui-select">
+                    <option value="">请选择</option>
+                    {% for info in role_info %}
+                        <option value="{{ info.name }}">{{ info.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+{#        </div>#}
+{#        <div class="layui-form-item">#}
+            <label class="layui-form-label">员工姓名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="employee_name" lay-verify="required" placeholder="请输入员工名称" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label">手机号码</label>
+            <div class="layui-input-inline">
+                <input type="text" name="phone" lay-verify="phone" placeholder="请输入号码" class="layui-input">
+            </div>
+{#        </div>#}
+{#        <div class="layui-form-item">#}
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-inline">
+                <input type="text" name="email" lay-verify="email" placeholder="请输入邮箱" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="LAY-user-back-search" id="LAY-user-back-search" value="确认">
+        </div>
+  </div>
+{% endblock %}
+{% block script_info %}
+<script>
+    layui.config({
+        base: '{% static "/layuiadmin/" %}'
+    }).extend({
+        index: '/lib/index'
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form ;
+    })
+</script>
+{% endblock %}
